@@ -2,8 +2,8 @@
 
 set -e
 
-echo "Starting Flask + Vite dev servers..."
+echo "Starting Docker + Vite dev servers..."
 
 npx concurrently \
-  "cd backend && source .venv/bin/activate && flask --app flaskr run --debug" \
+  "cd backend && source .venv/bin/activate && docker compose up" \
   "cd frontend && npm run dev"

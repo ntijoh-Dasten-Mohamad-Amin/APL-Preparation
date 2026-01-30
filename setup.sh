@@ -6,8 +6,8 @@ echo "Setting up backend..."
 cd backend
 python3 -m venv .venv
 source .venv/bin/activate
-pip install --upgrade pip
-pip install Flask
+docker compose build
+
 deactivate
 
 echo "Setting up front end"
