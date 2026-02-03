@@ -1,12 +1,14 @@
 import os
 from flask import Flask
+from flask_cors import CORS
 
 from app.extensions import db
-#from app.blueprints.routes import todos
+
 
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
+    CORS(app)
     
     app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
         "DATABASE_URL",
@@ -16,18 +18,12 @@ def create_app(test_config=None):
 
     db.init_app(app)    
 
-#    app.register_blueprint(todos)
+    from app.routes.todos import todos
+    app.register_blueprint(todos)
 
     @app.route('/hello')
     def hello():
         return "hello :333"
     
-    @app.route('/fack', methods=["POST"])
-    def test():
-        todo = "meooowww"
-        db.session.add(todo)
-        db.session.commit()
-        return {"todo": todo}
-
 
     return app 
