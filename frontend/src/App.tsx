@@ -1,34 +1,35 @@
-import { useState} from "react";
+import { useState, useEffect} from "react";
 import "./App.css";
 import red_imposter from "./assets/red_imposter.jpeg";
+import type { Todo } from "./types/todo.ts"
+import { deleteTodo, fetchTodos, createTodo } from "./api/todos.ts";
 
-interface Todo {
-  id: number;
-  name: string;
-  completed: boolean;
-}
 
-function App() {
+ function App() {
   const [input, setInput] = useState("");
   const [todos, setTodos] = useState<Todo[]>([]);
 
-  function handleSubmit(e: React.FormEvent) {
+  useEffect(() => {
+    async function loadTodos(){
+      const todos = await fetchTodos();
+      setTodos(todos);
+    }
+    loadTodos();
+  }, [])
+  
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+
     if (!input.trim()) return;
 
-    setTodos(prev => [
-      ...prev,
-      {
-        id: Date.now(),
-        name: input,
-        completed: false,
-      },
-    ]);
-
+    const newTodo = await createTodo(input);
+    console.log(newTodo)
+    setTodos(prev => [...prev, newTodo]);
     setInput("");
   }
 
   function handleDelete(id: number) {
+    deleteTodo(id);
     setTodos(prev => prev.filter(todo => todo.id !== id));
   }
 
@@ -49,7 +50,7 @@ function App() {
 
       <ul>
         {todos.map(todo => (
-          <li key={todo.id}> <input type="checkbox" /> {todo.name}
+          <li key={todo.id}> <input type="checkbox" /> {todo.task}
             <button onClick={() => handleDelete(todo.id)}> Delete </button>
           </li>
         ))}
