@@ -33,6 +33,10 @@ import { deleteTodo, fetchTodos, createTodo } from "./api/todos.ts";
     setTodos(prev => prev.filter(todo => todo.id !== id));
   }
 
+  function handleEdit(id: number, currentTask: string) {
+    
+  }
+
   function handlealert() {
     alert('RAAAAUUUUUUGGGGGGGGHHHHHHHHH');
   }
@@ -45,12 +49,13 @@ import { deleteTodo, fetchTodos, createTodo } from "./api/todos.ts";
       <form onSubmit={handleSubmit}>
         <input type="text" value={input} onChange={e => setInput(e.target.value)}/>
           <button>Add</button>
-          <button onClick={handlealert}> ALERT </button>
+          <button id="alert" onClick={handlealert}> ALERT </button>
       </form>
 
       <ul>
         {todos.map(todo => (
           <li key={todo.id}> <input type="checkbox" /> {todo.task}
+            <button onClick={() => handleEdit(todo.id, todo.task)}> Edit </button>
             <button onClick={() => handleDelete(todo.id)}> Delete </button>
           </li>
         ))}
