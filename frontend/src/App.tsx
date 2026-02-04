@@ -2,7 +2,7 @@ import { useState, useEffect} from "react";
 import "./App.css";
 import red_imposter from "./assets/red_imposter.jpeg";
 import type { Todo } from "./types/todo.ts"
-import { deleteTodo, fetchTodos, createTodo } from "./api/todos.ts";
+import { deleteTodo, fetchTodos, createTodo, toggleTodo } from "./api/todos.ts";
 
 
  function App() {
@@ -28,6 +28,12 @@ import { deleteTodo, fetchTodos, createTodo } from "./api/todos.ts";
     setInput("");
   }
 
+  async function handleToggle(id: number) {
+    const updatedTodo = await toggleTodo(id)
+
+    setTodos(prev => prev.map(todo => todo.id === id ? updatedTodo : todo))
+  }
+
   function handleDelete(id: number) {
     deleteTodo(id);
     setTodos(prev => prev.filter(todo => todo.id !== id));
@@ -50,7 +56,8 @@ import { deleteTodo, fetchTodos, createTodo } from "./api/todos.ts";
 
       <ul>
         {todos.map(todo => (
-          <li key={todo.id}> <input type="checkbox" /> {todo.task}
+          <li key={todo.id}> <input type="checkbox" checked={todo.completed} onChange={() => handleToggle(todo.id)}/>
+            {todo.task}
             <button onClick={() => handleDelete(todo.id)}> Delete </button>
           </li>
         ))}
