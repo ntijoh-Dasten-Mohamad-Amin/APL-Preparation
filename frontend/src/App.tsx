@@ -8,6 +8,9 @@ import { deleteTodo, fetchTodos, createTodo } from "./api/todos.ts";
  function App() {
   const [input, setInput] = useState("");
   const [todos, setTodos] = useState<Todo[]>([]);
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editText, setEditText] = useState("");
+
 
   useEffect(() => {
     async function loadTodos(){
@@ -34,8 +37,25 @@ import { deleteTodo, fetchTodos, createTodo } from "./api/todos.ts";
   }
 
   function handleEdit(id: number, currentTask: string) {
-    
+  setEditingId(id);
+  setEditText(currentTask);
   }
+
+  function handleSave(id: number) {
+  if (!editText.trim()) return;
+
+  setTodos(prev =>
+    prev.map(todo =>
+      todo.id === id
+        ? { ...todo, task: editText }
+        : todo
+    )
+  );
+
+  setEditingId(null);
+  setEditText("");
+}
+
 
   function handlealert() {
     alert('RAAAAUUUUUUGGGGGGGGHHHHHHHHH');
@@ -54,10 +74,20 @@ import { deleteTodo, fetchTodos, createTodo } from "./api/todos.ts";
 
       <ul>
         {todos.map(todo => (
-          <li key={todo.id}> <input type="checkbox" /> {todo.task}
-            <button onClick={() => handleEdit(todo.id, todo.task)}> Edit </button>
+          <li key={todo.id}> <input type="checkbox" />
+            {editingId === todo.id ? (
+            <>
+              <input value={editText} onChange={e => setEditText(e.target.value)}/>
+              <button onClick={() => handleSave(todo.id)}>Save</button>
+            </>
+          ) : (
+            <>
+              {todo.task}
+              <button onClick={() => handleEdit(todo.id, todo.task)}> Edit </button>
+            </>
+          )}
             <button onClick={() => handleDelete(todo.id)}> Delete </button>
-          </li>
+          </li> 
         ))}
       </ul>
     </>
@@ -65,3 +95,4 @@ import { deleteTodo, fetchTodos, createTodo } from "./api/todos.ts";
 }
 
 export default App;
+
