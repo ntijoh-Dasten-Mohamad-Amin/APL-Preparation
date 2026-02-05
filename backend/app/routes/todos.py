@@ -29,3 +29,17 @@ def delete_todo(id):
     db.session.commit()
 
     return "", 204
+
+@todos.route("/<int:id>", methods=["PUT"])
+def update_todo(id):
+    todo = Todo.query.get_or_404(id)
+
+    data = request.get_json()
+    todo.task = data["task"]
+
+    db.session.commit()
+
+    return jsonify({
+        "id": todo.id,
+        "task": todo.task
+    })

@@ -41,20 +41,38 @@ import { deleteTodo, fetchTodos, createTodo } from "./api/todos.ts";
   setEditText(currentTask);
   }
 
-  function handleSave(id: number) {
-  if (!editText.trim()) return;
+  async function handleSave(id: number) {
+    if (!editText.trim()) return;
 
-  setTodos(prev =>
-    prev.map(todo =>
-      todo.id === id
-        ? { ...todo, task: editText }
-        : todo
-    )
-  );
+    try {
+      const res = await fetch(`http://localhost:5001/api/todos/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ task: editText }),
+      });
 
-  setEditingId(null);
-  setEditText("");
-}
+      if (!res.ok) {
+        throw new Error("Failed to update todo");
+      }
+
+      const updatedTodo = await res.json();
+
+      // Update local state with DB response
+      setTodos(prev =>
+        prev.map(todo =>
+          todo.id === id ? updatedTodo : todo
+        )
+      );
+
+      setEditingId(null);
+      setEditText("");
+
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
 
   function handlealert() {
@@ -86,13 +104,14 @@ import { deleteTodo, fetchTodos, createTodo } from "./api/todos.ts";
               <button onClick={() => handleEdit(todo.id, todo.task)}> Edit </button>
             </>
           )}
-            <button onClick={() => handleDelete(todo.id)}> Delete </button>
+          <button onClick={() => handleDelete(todo.id)}> Delete </button>
           </li> 
         ))}
       </ul>
     </>
   );
 }
+
 
 export default App;
 
