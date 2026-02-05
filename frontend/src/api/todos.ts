@@ -29,3 +29,15 @@ export async function deleteTodo(id:number) {
         throw new Error("Failed to delete todo");
     }
 }
+
+export async function toggleTodo(id:number) {
+    const res = await fetch(API_URL+"/"+id, {
+        method: "PATCH" ,
+    });
+
+    if(!res.ok) {
+        throw new Error("Failed to patch todo")
+    }
+
+    return res.json()
+}
